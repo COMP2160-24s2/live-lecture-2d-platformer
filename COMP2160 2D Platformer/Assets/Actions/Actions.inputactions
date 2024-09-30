@@ -1,1 +1,67 @@
-{}
+{
+    "name": "Actions",
+    "maps": [
+        {
+            "name": "movement",
+            "id": "0150dc63-00dd-481f-bdcb-611cd98d352a",
+            "actions": [
+                {
+                    "name": "move",
+                    "type": "Value",
+                    "id": "f28b4081-ea3f-4b62-80ca-e40607d5135e",
+                    "expectedControlType": "Analog",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "1D Axis",
+                    "id": "ccb463e8-374a-4837-818a-cb48d69304a9",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "move",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "fc6f0ed5-d3e5-4a08-a7bf-243a775dc7cd",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "fc0cca4b-a5b5-4c1a-a934-455c8596dd87",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "e221490d-cc6e-45ce-be61-6bab4618c9c4",
+                    "path": "<Gamepad>/leftStick/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
