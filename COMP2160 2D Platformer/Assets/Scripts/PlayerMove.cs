@@ -36,6 +36,9 @@ public class PlayerMove : MonoBehaviour
     void Awake()
     {
         rigidbody = GetComponent<Rigidbody2D>();
+        rigidbody.gravityScale = 0;
+        rigidbody.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        rigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
 
         actions = new Actions();
         moveAction = actions.movement.move;
