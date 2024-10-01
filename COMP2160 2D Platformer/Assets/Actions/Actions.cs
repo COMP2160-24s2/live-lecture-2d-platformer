@@ -83,6 +83,34 @@ public partial class @Actions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""debug"",
+            ""id"": ""adea66ae-eb8b-4ab5-bdb3-24df4a34e840"",
+            ""actions"": [
+                {
+                    ""name"": ""reset"",
+                    ""type"": ""Button"",
+                    ""id"": ""5fb02e2f-351c-4091-adf1-a438af731378"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""179560fe-294f-46ec-aced-1e4b9fa399b0"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""reset"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -90,6 +118,9 @@ public partial class @Actions: IInputActionCollection2, IDisposable
         // movement
         m_movement = asset.FindActionMap("movement", throwIfNotFound: true);
         m_movement_move = m_movement.FindAction("move", throwIfNotFound: true);
+        // debug
+        m_debug = asset.FindActionMap("debug", throwIfNotFound: true);
+        m_debug_reset = m_debug.FindAction("reset", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -193,8 +224,58 @@ public partial class @Actions: IInputActionCollection2, IDisposable
         }
     }
     public MovementActions @movement => new MovementActions(this);
+
+    // debug
+    private readonly InputActionMap m_debug;
+    private List<IDebugActions> m_DebugActionsCallbackInterfaces = new List<IDebugActions>();
+    private readonly InputAction m_debug_reset;
+    public struct DebugActions
+    {
+        private @Actions m_Wrapper;
+        public DebugActions(@Actions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @reset => m_Wrapper.m_debug_reset;
+        public InputActionMap Get() { return m_Wrapper.m_debug; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(DebugActions set) { return set.Get(); }
+        public void AddCallbacks(IDebugActions instance)
+        {
+            if (instance == null || m_Wrapper.m_DebugActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_DebugActionsCallbackInterfaces.Add(instance);
+            @reset.started += instance.OnReset;
+            @reset.performed += instance.OnReset;
+            @reset.canceled += instance.OnReset;
+        }
+
+        private void UnregisterCallbacks(IDebugActions instance)
+        {
+            @reset.started -= instance.OnReset;
+            @reset.performed -= instance.OnReset;
+            @reset.canceled -= instance.OnReset;
+        }
+
+        public void RemoveCallbacks(IDebugActions instance)
+        {
+            if (m_Wrapper.m_DebugActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IDebugActions instance)
+        {
+            foreach (var item in m_Wrapper.m_DebugActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_DebugActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public DebugActions @debug => new DebugActions(this);
     public interface IMovementActions
     {
         void OnMove(InputAction.CallbackContext context);
+    }
+    public interface IDebugActions
+    {
+        void OnReset(InputAction.CallbackContext context);
     }
 }
