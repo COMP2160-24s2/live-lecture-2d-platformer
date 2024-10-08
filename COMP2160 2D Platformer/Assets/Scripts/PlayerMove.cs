@@ -16,7 +16,10 @@ public class PlayerMove : MonoBehaviour
 #region Parameters
     [SerializeField] private float gravity = -40;       // m/s/s
     [SerializeField] private float maxFallSpeed = -20;  // m/s
-    [SerializeField] private float speed = 10;          // m/s
+    [SerializeField] private float moveSpeed = 10;      // m/s
+    [SerializeField] private float jumpSpeed = 10;      // m/s
+    [SerializeField] private float jumpBufferTime = 0.1f; // s
+    [SerializeField] private float maxGroundSlope = 60; // degrees
 #endregion 
 
 #region Components
@@ -24,12 +27,19 @@ public class PlayerMove : MonoBehaviour
 #endregion
 
 #region State
+    private int nContacts = 0;
+    private ContactPoint2D[] contacts = new ContactPoint2D[100];
     private float move = 0;
+    private float jumpPressedTime = float.NegativeInfinity;
+
+    private Vector3? lastJumpPosition = null;
 #endregion
+
 
 #region Actions
     private Actions actions;
     private InputAction moveAction;
+    private InputAction jumpAction;
 #endregion
 
 #region Init & Destroy
@@ -42,6 +52,7 @@ public class PlayerMove : MonoBehaviour
 
         actions = new Actions();
         moveAction = actions.movement.move;
+        jumpAction = actions.movement.jump;
     }
 
     void OnEnable() 
@@ -60,7 +71,13 @@ public class PlayerMove : MonoBehaviour
     {
         move = moveAction.ReadValue<float>();
 
+        if (jumpAction.WasPressedThisFrame())
+        {
+            jumpPressedTime = Time.time;
+            lastJumpPosition = transform.position;
+        }
     }
+
 #endregion Update
 
 #region FixedUpdate
@@ -73,15 +90,37 @@ public class PlayerMove : MonoBehaviour
         v.y = Mathf.Max(v.y, maxFallSpeed);
 
         // move horizontally
-        v.x = move * speed;
+        v.x = move * moveSpeed;
+
+        // jump
+        if (Time.fixedTime - jumpPressedTime < jumpBufferTime && OnGround())
+        {
+            v.y = jumpSpeed;
+            jumpPressedTime = float.NegativeInfinity;
+        }
 
         rigidbody.velocity = v;
     }
+
+    private bool OnGround() 
+    {
+        nContacts = rigidbody.GetContacts(contacts);
+
+        for (int i = 0; i < nContacts; i++)
+        {
+            if (Vector2.Angle(contacts[i].normal, Vector2.up) < maxGroundSlope)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 #endregion FixedUpdate
+
 
 #region Gizmos
 
-    private ContactPoint2D[] contacts = new ContactPoint2D[100];
     void OnDrawGizmos()
     {
         if (!Application.isPlaying)
@@ -90,9 +129,7 @@ public class PlayerMove : MonoBehaviour
             return;
         }
 
-        Gizmos.color = Color.red;
-
-        int nContacts = rigidbody.GetContacts(contacts);
+        Gizmos.color = Color.white;
 
         for (int i = 0; i < nContacts; i++)
         {
@@ -100,6 +137,13 @@ public class PlayerMove : MonoBehaviour
             Vector3 n = contacts[i].normal;
             Gizmos.DrawWireSphere(p, 0.1f);
             Gizmos.DrawLine(p, p + n);
+        }
+
+        if (lastJumpPosition != null) 
+        {
+            Gizmos.color = Color.yellow;
+            Vector3 p = lastJumpPosition.Value;
+            Gizmos.DrawWireSphere(p, 0.1f);
         }
     }
 #endregion Gizmos

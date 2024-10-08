@@ -35,6 +35,15 @@ public partial class @Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""jump"",
+                    ""type"": ""Button"",
+                    ""id"": ""75644662-f22a-4490-ac75-7b11784d9629"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -79,6 +88,28 @@ public partial class @Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""12846fdc-3e1d-4d74-9324-ae902a14741b"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a273da88-6ad4-4e16-ae1c-8f7a6942d7ab"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -129,6 +160,7 @@ public partial class @Actions: IInputActionCollection2, IDisposable
         // movement
         m_movement = asset.FindActionMap("movement", throwIfNotFound: true);
         m_movement_move = m_movement.FindAction("move", throwIfNotFound: true);
+        m_movement_jump = m_movement.FindAction("jump", throwIfNotFound: true);
         // debug
         m_debug = asset.FindActionMap("debug", throwIfNotFound: true);
         m_debug_reset = m_debug.FindAction("reset", throwIfNotFound: true);
@@ -194,11 +226,13 @@ public partial class @Actions: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_movement;
     private List<IMovementActions> m_MovementActionsCallbackInterfaces = new List<IMovementActions>();
     private readonly InputAction m_movement_move;
+    private readonly InputAction m_movement_jump;
     public struct MovementActions
     {
         private @Actions m_Wrapper;
         public MovementActions(@Actions wrapper) { m_Wrapper = wrapper; }
         public InputAction @move => m_Wrapper.m_movement_move;
+        public InputAction @jump => m_Wrapper.m_movement_jump;
         public InputActionMap Get() { return m_Wrapper.m_movement; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -211,6 +245,9 @@ public partial class @Actions: IInputActionCollection2, IDisposable
             @move.started += instance.OnMove;
             @move.performed += instance.OnMove;
             @move.canceled += instance.OnMove;
+            @jump.started += instance.OnJump;
+            @jump.performed += instance.OnJump;
+            @jump.canceled += instance.OnJump;
         }
 
         private void UnregisterCallbacks(IMovementActions instance)
@@ -218,6 +255,9 @@ public partial class @Actions: IInputActionCollection2, IDisposable
             @move.started -= instance.OnMove;
             @move.performed -= instance.OnMove;
             @move.canceled -= instance.OnMove;
+            @jump.started -= instance.OnJump;
+            @jump.performed -= instance.OnJump;
+            @jump.canceled -= instance.OnJump;
         }
 
         public void RemoveCallbacks(IMovementActions instance)
@@ -284,6 +324,7 @@ public partial class @Actions: IInputActionCollection2, IDisposable
     public interface IMovementActions
     {
         void OnMove(InputAction.CallbackContext context);
+        void OnJump(InputAction.CallbackContext context);
     }
     public interface IDebugActions
     {
