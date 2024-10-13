@@ -207,7 +207,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gravity: -40
   maxFallSpeed: -20
-  speed: 10
+  moveSpeed: 5
+  jumpSpeed: 10
+  jumpBufferTime: 0.1
+  maxGroundSlope: 60
 --- !u!114 &7220350245912037690
 MonoBehaviour:
   m_ObjectHideFlags: 0
