@@ -1006,6 +1006,34 @@ PrefabInstance:
       propertyPath: bounds.height
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 5909040554892825102, guid: 7cb445e8f16d24c7c93eb7e97ec1171e, type: 3}
+      propertyPath: cameraSpeed.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5909040554892825102, guid: 7cb445e8f16d24c7c93eb7e97ec1171e, type: 3}
+      propertyPath: cameraSpeed.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5909040554892825102, guid: 7cb445e8f16d24c7c93eb7e97ec1171e, type: 3}
+      propertyPath: cameraSpeed.m_Curve.Array.data[1].value
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 5909040554892825102, guid: 7cb445e8f16d24c7c93eb7e97ec1171e, type: 3}
+      propertyPath: cameraSpeed.m_Curve.Array.data[0].inSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5909040554892825102, guid: 7cb445e8f16d24c7c93eb7e97ec1171e, type: 3}
+      propertyPath: cameraSpeed.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5909040554892825102, guid: 7cb445e8f16d24c7c93eb7e97ec1171e, type: 3}
+      propertyPath: cameraSpeed.m_Curve.Array.data[0].outSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5909040554892825102, guid: 7cb445e8f16d24c7c93eb7e97ec1171e, type: 3}
+      propertyPath: cameraSpeed.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8915320421334672561, guid: 7cb445e8f16d24c7c93eb7e97ec1171e, type: 3}
       propertyPath: m_Name
       value: Follower

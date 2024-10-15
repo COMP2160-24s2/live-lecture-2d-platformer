@@ -15,7 +15,7 @@ public class Follower : MonoBehaviour
     [SerializeField] private float leadDistance = 5;
     [SerializeField] private Rect bounds;
     [SerializeField] private float minTargetSpeed = 0.1f;
-    [SerializeField] private float cameraSpeed = 20f;
+    [SerializeField] private AnimationCurve cameraSpeed;
 #endregion 
 
 #region Connected object
@@ -65,14 +65,16 @@ public class Follower : MonoBehaviour
         }
 
         float delta = targetOffset - offset;
+        // Implement easing based on the distance to the target
+        float speed = cameraSpeed.Evaluate(Mathf.Abs(delta));
 
         if (delta > 0)
         {
-            offset += Mathf.Min(delta, cameraSpeed * Time.deltaTime);
+            offset += Mathf.Min(delta, speed * Time.deltaTime);
         }
         else if (delta < 0)
         {
-            offset += Mathf.Max(delta, -cameraSpeed * Time.deltaTime);
+            offset += Mathf.Max(delta, -speed * Time.deltaTime);
         }
 
         Vector3 p = transform.position;
