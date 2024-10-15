@@ -35,6 +35,14 @@ public class PlayerMove : MonoBehaviour
     private Vector3? lastJumpPosition = null;
 #endregion
 
+#region Properties
+    public Vector2 velocity 
+    {
+        get {
+            return rigidbody.velocity;
+        }
+    }
+#endregion
 
 #region Actions
     private Actions actions;
