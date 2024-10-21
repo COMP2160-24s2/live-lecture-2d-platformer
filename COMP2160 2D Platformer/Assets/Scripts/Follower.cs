@@ -30,6 +30,10 @@ public class Follower : MonoBehaviour
     void Awake()
     {
         UpdateBounds();
+    }
+
+    void Start()
+    {
         UpdatePosition();
     }
 
