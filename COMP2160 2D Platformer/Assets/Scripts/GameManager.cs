@@ -23,15 +23,19 @@ public class GameManager : MonoBehaviour
 #endregion
 
 #region State
+    private int coinsCollected = 0;
 #endregion
 
 #region Properties
-#endregion
-
-#region Actions
+    public int CoinsCollected
+    {
+        get { return coinsCollected; }
+    }
 #endregion
 
 #region Events
+    public delegate void CoinCollectedHandler(int coinsCollected);
+    public event CoinCollectedHandler OnCoinCollected;
 #endregion
 
 #region Init & Destroy
@@ -44,6 +48,10 @@ public class GameManager : MonoBehaviour
 
         instance = this;
     }
+
+    void Start()
+    {
+    }
 #endregion 
 
 #region Update
@@ -52,20 +60,13 @@ public class GameManager : MonoBehaviour
     }
 #endregion 
 
-#region FixedUpdate
-    void FixedUpdate()
-    {        
+#region Events
+    public void CoinCollected()
+    {
+        coinsCollected++;
+        OnCoinCollected.Invoke(coinsCollected);
     }
 #endregion 
 
-#region Gizmos
-    void OnDrawGizmos()
-    {
-        if (!Application.isPlaying)
-        {
-            // Don't run in the editor
-            return;
-        }
-    }
-#endregion 
+
 }
