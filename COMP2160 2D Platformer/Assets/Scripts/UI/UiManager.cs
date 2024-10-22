@@ -8,7 +8,7 @@
 using UnityEngine;
 using TMPro;
 
-public class UiManager : MonoBehaviour
+public class UIManager : MonoBehaviour
 {
 
 #region Parameters
