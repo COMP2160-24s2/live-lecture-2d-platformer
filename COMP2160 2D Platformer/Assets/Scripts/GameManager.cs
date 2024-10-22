@@ -48,16 +48,6 @@ public class GameManager : MonoBehaviour
 
         instance = this;
     }
-
-    void Start()
-    {
-    }
-#endregion 
-
-#region Update
-    void Update()
-    {
-    }
 #endregion 
 
 #region Events
