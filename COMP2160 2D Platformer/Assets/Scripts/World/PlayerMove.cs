@@ -6,6 +6,7 @@
  * For Unity Version: 2022.3
  */
 
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -28,7 +29,7 @@ public class PlayerMove : MonoBehaviour
 
 #region State
     private int nContacts = 0;
-    private ContactPoint2D[] contacts = new ContactPoint2D[100];
+    private List<ContactPoint2D> contacts = new List<ContactPoint2D>();
     private float move = 0;
     private float jumpPressedTime = float.NegativeInfinity;
 
@@ -91,6 +92,9 @@ public class PlayerMove : MonoBehaviour
 #region FixedUpdate
     void FixedUpdate()
     {        
+        // update contacts
+        nContacts = rigidbody.GetContacts(contacts);
+
         Vector2 v = rigidbody.velocity;
 
         // apply gravity
@@ -112,8 +116,6 @@ public class PlayerMove : MonoBehaviour
 
     private bool OnGround() 
     {
-        nContacts = rigidbody.GetContacts(contacts);
-
         for (int i = 0; i < nContacts; i++)
         {
             if (Vector2.Angle(contacts[i].normal, Vector2.up) < maxGroundSlope)
