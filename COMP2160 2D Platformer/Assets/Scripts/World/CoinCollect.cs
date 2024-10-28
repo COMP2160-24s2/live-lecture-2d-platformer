@@ -10,13 +10,11 @@ using WordsOnPlay.Utils;
 
 public class CoinCollect : MonoBehaviour
 {
-
 #region FixedUpdate
     void OnTriggerEnter2D(Collider2D other)
     {
         Destroy(gameObject);
         GameManager.Instance?.CoinCollected();
     }
-#endregion 
-
+#endregion
 }

@@ -266,6 +266,10 @@ PrefabInstance:
       propertyPath: m_fontColor32.rgba
       value: 4278238719
       objectReference: {fileID: 0}
+    - target: {fileID: 3052934924773464366, guid: e0abb647580a44b42bcdbe4254f23c8c, type: 3}
+      propertyPath: coinFormat
+      value: 'Coins: {0}'
+      objectReference: {fileID: 0}
     - target: {fileID: 4212970990592672210, guid: e0abb647580a44b42bcdbe4254f23c8c, type: 3}
       propertyPath: m_Name
       value: UiManager

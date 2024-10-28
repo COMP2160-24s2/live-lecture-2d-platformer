@@ -396,6 +396,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a968cd7ff36fc41c7af419387e905835, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  leadDistance: 5
+  bounds:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  minTargetSpeed: 0.1
+  cameraSpeed:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   target: {fileID: 1669193720}
 --- !u!1 &1251860241
 GameObject:
@@ -3244,6 +3258,10 @@ PrefabInstance:
     - target: {fileID: 3132121868352831668, guid: 8ce1d85c3aeb741b99b32877b5c59a85, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3132121868352831668, guid: 8ce1d85c3aeb741b99b32877b5c59a85, type: 3}
+      propertyPath: m_TagString
+      value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 4420176273006137653, guid: 8ce1d85c3aeb741b99b32877b5c59a85, type: 3}
       propertyPath: m_LocalPosition.x

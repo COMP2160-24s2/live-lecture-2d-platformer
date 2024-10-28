@@ -18,7 +18,8 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] private float gravity = -40;       // m/s/s
     [SerializeField] private float maxFallSpeed = -20;  // m/s
     [SerializeField] private float moveSpeed = 10;      // m/s
-    [SerializeField] private float jumpSpeed = 10;      // m/s
+    [SerializeField] private float jumpInitialSpeed = 10;      // m/s
+    [SerializeField] private float jumpRiseTime = 0.1f; // s
     [SerializeField] private float jumpBufferTime = 0.1f; // s
     [SerializeField] private float maxGroundSlope = 60; // degrees
 #endregion 
@@ -27,14 +28,41 @@ public class PlayerMove : MonoBehaviour
     private Rigidbody2D rigidbody;
 #endregion
 
+#region Enums
+    public enum JumpState { OnGround, RisingNoGravity, Gravity, FallingNoGravity };
+#endregion
+
 #region State
+    private JumpState jumpState = JumpState.Gravity;
+    private float jumpSpeed = 0;
+    private float jumpStartTime = float.NegativeInfinity;
+
     private int nContacts = 0;
     private List<ContactPoint2D> contacts = new List<ContactPoint2D>();
     private float move = 0;
     private float jumpPressedTime = float.NegativeInfinity;
-
-    private Vector3? lastJumpPosition = null;
 #endregion
+
+#region Properties
+    private JumpState State 
+    {
+        get { return jumpState; }
+        set { 
+            jumpState = value;
+            stateChangePositions.Add(transform.position);
+            stateChangeValues.Add(jumpState);
+        }
+    }
+#endregion
+
+
+#region Debug State
+    private Vector3? lastJumpPosition = null;
+
+    private List<Vector3> stateChangePositions = new List<Vector3>();
+    private List<JumpState> stateChangeValues = new List<JumpState>();
+#endregion
+
 
 #region Properties
     public Vector2 velocity 
@@ -86,7 +114,6 @@ public class PlayerMove : MonoBehaviour
             lastJumpPosition = transform.position;
         }
     }
-
 #endregion Update
 
 #region FixedUpdate
@@ -95,21 +122,13 @@ public class PlayerMove : MonoBehaviour
         // update contacts
         nContacts = rigidbody.GetContacts(contacts);
 
-        Vector2 v = rigidbody.velocity;
+        UpdateStateMachine();
 
-        // apply gravity
-        v.y += gravity * Time.fixedDeltaTime;
-        v.y = Mathf.Max(v.y, maxFallSpeed);
+        Vector2 v = rigidbody.velocity;
 
         // move horizontally
         v.x = move * moveSpeed;
-
-        // jump
-        if (Time.fixedTime - jumpPressedTime < jumpBufferTime && OnGround())
-        {
-            v.y = jumpSpeed;
-            jumpPressedTime = float.NegativeInfinity;
-        }
+        v.y = jumpSpeed;
 
         rigidbody.velocity = v;
     }
@@ -128,8 +147,68 @@ public class PlayerMove : MonoBehaviour
     }
 #endregion FixedUpdate
 
+#region State Machine
+    private void UpdateStateMachine()
+    {
+        bool isJumpPressed = jumpAction.IsPressed();
+
+        switch (State) {
+            case JumpState.OnGround:
+                if (!OnGround())
+                {
+                    State = JumpState.Gravity;
+                    
+                }
+                else if (Time.fixedTime - jumpPressedTime < jumpBufferTime)
+                {
+                    jumpSpeed = jumpInitialSpeed;
+                    jumpStartTime = Time.fixedTime;
+
+                    // Note: Spend at least one frame in RisingNoGravity to avoid
+                    // bug where rigidbody contacts lag a frame behind movement.
+
+                    State = JumpState.RisingNoGravity;
+                }
+            break;
+
+            case JumpState.RisingNoGravity:
+                if (Time.time - jumpStartTime > jumpRiseTime || 
+                    !isJumpPressed)
+                {
+                    State = JumpState.Gravity;
+                }
+            break;
+
+            case JumpState.Gravity:
+                jumpSpeed = jumpSpeed + gravity * Time.fixedDeltaTime;
+
+                if (OnGround())
+                {
+                    State = JumpState.OnGround;
+                    jumpSpeed = 0;
+                }
+                else if (jumpSpeed < maxFallSpeed)
+                {
+                    State = JumpState.FallingNoGravity;
+                    jumpSpeed = maxFallSpeed;
+                }
+            break;
+
+            case JumpState.FallingNoGravity:
+                if (OnGround())
+                {
+                    State = JumpState.OnGround;
+                    jumpSpeed = 0;
+                }
+            break;
+        }
+    }
+#endregion
+
 
 #region Gizmos
+
+    private Color[] stateGizmoColors = { Color.blue, Color.cyan, Color.green, Color.magenta};
 
     void OnDrawGizmos()
     {
@@ -154,6 +233,15 @@ public class PlayerMove : MonoBehaviour
             Gizmos.color = Color.yellow;
             Vector3 p = lastJumpPosition.Value;
             Gizmos.DrawWireSphere(p, 0.1f);
+        }
+
+        for (int i = 0; i < stateChangePositions.Count; i++)
+        {
+            Vector3 pos = stateChangePositions[i];
+            JumpState state = stateChangeValues[i];
+
+            Gizmos.color = stateGizmoColors[(int) state];
+            Gizmos.DrawWireSphere(pos, 0.1f);
         }
     }
 #endregion Gizmos
